@@ -87,7 +87,7 @@ def hardblock_flow(flow_settings):
       if flow_settings['read_saif_file']:
         file.write("read_saif saif.saif \n")
       else:
-        file.write("set_switching_activity -static_probability " + str(flow_settings['static_probability']) + " -toggle_rate " + str(flow_settings['toggle_rate']) + " [all_nets] \n")
+        file.write("set_switching_activity -static_probability " + str(flow_settings['static_probability']) + " -toggle_rate " + str(flow_settings['toggle_rate']) + " [get_nets] \n")
 
       file.write("ungroup -all -flatten \n")
       file.write("report_power > " + os.path.expanduser(flow_settings['synth_folder']) + "/power.rpt\n")
@@ -438,7 +438,7 @@ def hardblock_flow(flow_settings):
             if flow_settings['generate_activity_file']:
 							file.write("read_saif -input saif.saif -instance_name testbench/uut \n")
             else:
-              file.write("set_switching_activity -static_probability " + str(flow_settings['static_probability']) + " -toggle_rate " + str(flow_settings['toggle_rate']) + " [all_nets] \n")
+              file.write("set_switching_activity -static_probability " + str(flow_settings['static_probability']) + " -toggle_rate " + str(flow_settings['toggle_rate']) + " [get_nets] \n")
             #file.write("read_saif -input saif.saif -instance_name testbench/uut \n")
             #file.write("read_vcd -input ./modelsim_dir/vcd.vcd \n")
             file.write(r'read_parasitics -increment ' + os.path.expanduser(flow_settings['pr_folder']) + r'/spef.spef' + "\n")
