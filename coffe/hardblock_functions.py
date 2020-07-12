@@ -87,7 +87,7 @@ def hardblock_flow(flow_settings):
       if flow_settings['read_saif_file']:
         file.write("read_saif saif.saif \n")
       else:
-        file.write("set_switching_activity -static_probability " + str(flow_settings['static_probability']) + " -toggle_rate " + str(flow_settings['toggle_rate']) + " [get_nets] \n")
+        file.write("set_switching_activity -static_probability " + str(flow_settings['static_probability']) + " -base_clock $clk_name -toggle_rate " + str(flow_settings['toggle_rate']) + " [get_nets] \n")
 
       file.write("ungroup -all -flatten \n")
       file.write("report_power > " + os.path.expanduser(flow_settings['synth_folder']) + "/power.rpt\n")
@@ -107,10 +107,10 @@ def hardblock_flow(flow_settings):
       # Run the scrip in design compiler shell
       subprocess.call('dc_shell-t -f dc_script.tcl', shell=True, executable='/bin/tcsh') 
       # clean after DC!
-      subprocess.call('rm -rf command.log', shell=True)
-      subprocess.call('rm -rf default.svf', shell=True)
-      subprocess.call('rm -rf filenames.log', shell=True)
-      subprocess.call('rm -rf dc_script.tcl', shell=True) 
+      #subprocess.call('rm -rf command.log', shell=True)
+      #subprocess.call('rm -rf default.svf', shell=True)
+      #subprocess.call('rm -rf filenames.log', shell=True)
+      #subprocess.call('rm -rf dc_script.tcl', shell=True) 
 
       # Make sure it worked properly
       # Open the timing report and make sure the critical path is non-zero:
@@ -368,7 +368,7 @@ def hardblock_flow(flow_settings):
             file.close()      
 
             subprocess.call('vsim -c -do modelsim.do', shell=True)           
-            subprocess.call('rm -rf modelsim.do', shell=True)
+            #subprocess.call('rm -rf modelsim.do', shell=True)
             subprocess.call('vcd2wlf ./modelsim_dir/vcd.vcd out.wlf', shell=True)
             subprocess.call('wlf2vcd -o test.vcd out.wlf', shell=True)
             subprocess.call('vcd2saif -input test.vcd -o saif.saif', shell=True)

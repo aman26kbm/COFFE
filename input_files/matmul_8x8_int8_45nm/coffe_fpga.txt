@@ -143,7 +143,7 @@ gate_length=22
 # This parameter controls the gate length of PMOS level-restorers. For example, setting this paramater 
 # to 4 sets the gate length to 4x the value of 'gate_legnth'. Increasing the gate length weakens the 
 # PMOS level-restorer, which is sometimes necessary to ensure proper switching.
-rest_length_factor = 1
+rest_length_factor = 8
 
 # Minimum transistor diffusion width (nm).
 min_tran_width=45

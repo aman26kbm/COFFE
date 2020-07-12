@@ -146,12 +146,12 @@ primetime_folder=/home/projects/ljohn/aarora1/coffe2_aman/COFFE/output_files/mat
 
 # COFFE parameters:
 name=matmul8x8
-num_gen_inputs=397
+num_gen_inputs=269
 crossbar_population=0.5
 height=16
 num_gen_outputs=90
 num_dedicated_outputs=128
-soft_logic_per_block=16
+soft_logic_per_block=4
 area_scale_factor=0.14
 freq_scale_factor=2.32
 power_scale_factor=0.29

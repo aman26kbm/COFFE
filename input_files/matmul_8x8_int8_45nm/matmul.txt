@@ -88,6 +88,7 @@ gnd_net=VSS
 gnd_pin=VSS
 pwr_net=VDD
 pwr_pin=VDD
+tilehi_tielo_cells_between_power_gnd=False
 
 #specify footprint names for inverters, buffers, delays.
 #this is optional. you can get these values from the lib file.
@@ -142,12 +143,12 @@ primetime_folder=/home/projects/ljohn/aarora1/coffe2_aman/COFFE/output_files/mat
 
 # COFFE parameters:
 name=matmul8x8
-num_gen_inputs=397
+num_gen_inputs=269
 crossbar_population=0.5
 height=16
 num_gen_outputs=90
 num_dedicated_outputs=128
-soft_logic_per_block=16
+soft_logic_per_block=4
 area_scale_factor=0.21
 freq_scale_factor=1.33
 power_scale_factor=0.46
