@@ -14,6 +14,11 @@ module dsp_slice_combined (
 	internal_coeffb,
 	stream,
 	chainin,
+  coeffbank_addr,
+  coeffbank_data,
+  coeffbank_we,
+  coeffbank_sel,
+  constant,
 	resulta,
 	resultb,
 	chainout
@@ -31,6 +36,11 @@ input internal_coeffa;
 input internal_coeffb;
 input [115:0] stream;
 input [63:0] chainin;
+input [2:0] coeffbank_addr;
+input [17:0] coeffbank_data;
+input coeffbank_we;
+input coeffbank_sel;
+input [63:0] constant;
 output [63:0] resulta;
 output [36:0] resultb;
 output [63:0] chainout;
@@ -44,6 +54,9 @@ reg [115:0] stream_flopped_1;
 reg mux9_select_flopped_1;
 reg internal_coeffa_flopped_1;
 reg internal_coeffb_flopped_1;
+
+wire mux_select_1;
+wire mux_select_2;
 
 always @ (posedge clk) begin
 if (reset == 1'b1) begin
@@ -245,15 +258,11 @@ pre_adder_combined preadder( .IN1 (stream_flopped_1 [36:0]), .IN2 (stream_floppe
 
 //internal coeffbank
 reg [17:0]coeffbank_a [0:7];
-initial begin
-coeffbank_a[0] <= 18'h1111;  coeffbank_a[1] <= 18'h2222; coeffbank_a[2] <= 18'h3333; coeffbank_a[3] <= 18'h4444;
-coeffbank_a[4] <= 18'h5555;  coeffbank_a[5] <= 18'h6666; coeffbank_a[6] <= 18'h7777; coeffbank_a[7] <= 18'h8888; 
-end
-
-reg [17:0]coeffbank_b [0:7];
-initial begin
-coeffbank_b[0] <= 18'h1111;  coeffbank_b[1] <= 18'h2222; coeffbank_b[2] <= 18'h3333; coeffbank_b[3] <= 18'h4444;
-coeffbank_b[4] <= 18'h5555;  coeffbank_b[5] <= 18'h6666; coeffbank_b[6] <= 18'h7777; coeffbank_b[7] <= 18'h8888; 
+reg [17:0] coeffbank_b [0:7];
+always @(posedge clk)  
+begin 
+    if (coeffbank_we && coeffbank_sel)  coeffbank_a[coeffbank_addr] <= coeffbank_data;
+    if (coeffbank_we && ~coeffbank_sel) coeffbank_b[coeffbank_addr] <= coeffbank_data;
 end
 
 //multiplier
@@ -419,13 +428,8 @@ always @(posedge clk) begin
 end
 
 wire [63:0]data_out;
-reg [63:0] constant;
 wire [63:0] mux10_out;
 reg [63:0]double_acc_flopped;
-
-initial begin
-constant <= 64'h1234567887654321;
-end
 
 assign mux10_out = accumulate_flopped_4 ? double_acc_flopped: ( loadconst_flopped_4 ? constant : 64'd0 );
 assign data_out = accumulate_flopped_4 ? negate_out_flopped_1 + mux10_out : ( loadconst_flopped_4 ? mux10_out : ( negate_flopped_4 ? negate_out_flopped_1 + chainin : negate_out_flopped_1 ));

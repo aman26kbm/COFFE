@@ -4,7 +4,7 @@
 ########## General Design Settings ##########
 #############################################
 # The folder in which all the design files are located:
-design_folder=/home/projects/ljohn/aarora1/coffe2_aman2/COFFE/input_files/matmul_8x8int8_4x4fp16_45nm/matmul_hdl
+design_folder=/home/projects/ljohn/aarora1/coffe2_aman2/COFFE/input_files/dsp_18_27_45nm/dsp_hdl
 
 # The design language. Should be either 'verilog', 'vhdl' or 'sverilog'
 design_language=verilog
@@ -25,10 +25,10 @@ clock_pin_name=clk
 clock_period=3.0
 
 # Name of the top-level entity in the design
-top_level=matmul_slice
+top_level=dsp_slice_combined
 
 # The name of the folder in which post-synthesis files and synthesis reports are to be stored
-synth_folder=/home/projects/ljohn/aarora1/coffe2_aman2/COFFE/output_files/matmul_8x8int8_4x4fp16_45nm/matmul_synth
+synth_folder=/home/projects/ljohn/aarora1/coffe2_aman2/COFFE/output_files/dsp_18_27_45nm/dsp_synth
 
 # Do you want to be informed of warnings during synthesis?
 show_warnings=True
@@ -124,34 +124,37 @@ height_to_width_ratio=16.0
 space_around_core=10
 
 # The folder in which place and route reports and post-routing netlists and spef files will be stored
-pr_folder=/home/projects/ljohn/aarora1/coffe2_aman2/COFFE/output_files/matmul_8x8int8_4x4fp16_45nm/matmul_pnr
+pr_folder=/home/projects/ljohn/aarora1/coffe2_aman2/COFFE/output_files/dsp_18_27_45nm/dsp_pnr
 
 
 ##############################################
 ########## Prime Time Settings ###############
 ##############################################
 
-mode_signal=slice_mode
-mode_signal=slice_dtype
-#mode_signal=address_mat_b[5]
-#mode_signal=address_mat_c[0]
-#mode_signal=address_mat_c[1]
-#mode_signal=address_mat_c[2]
+#mode_signal=mode_0
+#mode_signal=mode_1
+#mode_signal=loadconst
+#mode_signal=accumulate
+#mode_signal=negate
+#mode_signal=sub
+mode_signal=mode[0]
+mode_signal=mode[1]
+#mode_signal=mux9_select
 
 #the directory containing the primetime library and the name of the library file
 primetime_lib_path=/home/projects/ljohn/aarora1/cadence_gpdk/gsclib045_all_v4.4/lan/flow/t1u1/reference_libs/GPDK045/gsclib045_all_v4.4/gsclib045/timing/
 primetime_lib_name=fast_vdd1v0_basicCells.modif.db
 
 # The name of the folder in which primetime results/reports are to be stored
-primetime_folder=/home/projects/ljohn/aarora1/coffe2_aman2/COFFE/output_files/matmul_8x8int8_4x4fp16_45nm/matmul_pt
+primetime_folder=/home/projects/ljohn/aarora1/coffe2_aman2/COFFE/output_files/dsp_18_27_45nm/dsp_pt
 
 # COFFE parameters:
-name=matmul_slice
-num_gen_inputs=342
+name=dsp_slice
+num_gen_inputs=215
 crossbar_population=0.5
-height=16
-num_gen_outputs=114
-num_dedicated_outputs=192
+height=8
+num_gen_outputs=101
+num_dedicated_outputs=64
 soft_logic_per_block=4
 area_scale_factor=0.21
 freq_scale_factor=1.33
