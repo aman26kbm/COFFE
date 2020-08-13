@@ -68,6 +68,10 @@ reg [115:0] stream_flopped_3;
 reg mux9_select_flopped_3;
 reg internal_coeffa_flopped_1;
 reg internal_coeffb_flopped_1;
+reg internal_coeffa_flopped_2;
+reg internal_coeffb_flopped_2;
+reg internal_coeffa_flopped_3;
+reg internal_coeffb_flopped_3;
 
 wire mux_select_1;
 wire mux_select_2;
@@ -106,6 +110,8 @@ if (reset == 1'b1) begin
  mode_flopped_2 <= 0 ;
  stream_flopped_2 <= 0 ;
  mux9_select_flopped_2 <= 0;
+ internal_coeffa_flopped_2 <= 0;
+ internal_coeffb_flopped_2 <= 0;
 end
 else begin
  loadconst_flopped_2 <= loadconst_flopped_1;
@@ -115,6 +121,8 @@ else begin
  mode_flopped_2 <= mode_flopped_1;
  stream_flopped_2 <= stream_flopped_1;
  mux9_select_flopped_2 <= mux9_select_flopped_1;
+ internal_coeffa_flopped_2 <= internal_coeffa_flopped_1;
+ internal_coeffb_flopped_2 <= internal_coeffb_flopped_1;
 end
 end
 
@@ -127,6 +135,8 @@ if (reset == 1'b1) begin
  mode_flopped_3 <= 0 ;
  stream_flopped_3 <= 0 ;
  mux9_select_flopped_3 <= 0;
+ internal_coeffa_flopped_3 <= 0;
+ internal_coeffb_flopped_3 <= 0;
 end
 else begin
  loadconst_flopped_3 <= loadconst_flopped_2;
@@ -136,6 +146,8 @@ else begin
  mode_flopped_3 <= mode_flopped_2;
  stream_flopped_3 <= stream_flopped_2;
 mux9_select_flopped_3 <= mux9_select_flopped_2;
+  internal_coeffa_flopped_3 <= internal_coeffa_flopped_2;
+ internal_coeffb_flopped_3 <= internal_coeffb_flopped_2;
 end
 end
 
@@ -157,8 +169,8 @@ reg [36:0] mult_ip_1;
 reg [36:0] mult_ip_2;
 wire [73:0] mult_out;
 
-assign mux_select_1= internal_coeffa_flopped_1;
-assign mux_select_2= internal_coeffb_flopped_1;
+assign mux_select_1= internal_coeffa_flopped_3;
+assign mux_select_2= internal_coeffb_flopped_3;
 
 always @ (*) begin
 if (mode_flopped_3 ==1'b0) begin
@@ -187,51 +199,6 @@ end
 wire [53:0]negate_out;
 assign negate_out = negate ? ~temp_signal + 1: temp_signal;
 
-
-/*
-//27*27////////////////////////////////////////////////
-module chainout_add_acc(accumulate, loadconst, negate, data_1, chainin, data_2, data_out);
-input accumulate;
-input loadconst;
-input negate;
-input [63 : 0]data_1;
-input [63 : 0]chainin;
-input [53 : 0]data_2;
-output [63 : 0]data_out;
-assign data_out = accumulate ? data_1 + data_2 : ( loadconst ? data_1 : ( negate ? data_2 + chainin : data_2 ));
-endmodule 
-
-assign mux6_out = accumulate_flopped_3 ? double_acc_flopped : ( loadconst_flopped_3 ? constant_flopped_3 : 64'd0 );
-chainout_add_acc M4 (accumulate_flopped_3, loadconst_flopped_3, negate_flopped_3, mux6_out, chainin, inverse_out, chainout_add_acc_out );
-
-
-//18*19///////////////////////////////////////////////////////////////////////////////
-module chainout_add_acc(accumulate, negate, data_1, chainin, data_2, data_out);
-input accumulate;
-input negate;
-input [73 : 0]data_1;
-input [63 : 0]chainin;
-input [37 : 0]data_2;
-output [73 : 0]data_out;
-assign data_out = accumulate ? data_1 + data_2 : ( negate ? data_2 + chainin : data_1 );
-endmodule
-
-////////////
-reg [37:0]double_acc_flopped;
-wire[73:0] mux10_out;
-assign mux10_out = accumulate_flopped_3 ? double_acc_flopped: ( loadconst_flopped_3 ? constant_flopped_3 : 32'd0 );
-
-wire [73:0]add_acc_out;
-chainout_add_acc M7(accumulate_flopped_3, negate_flopped_3, mux10_out, chainin, inverse_out, add_acc_out);
-/////////
-
-*/
-// negate_out : 54 bits
-// chainin : 64 bits
-// mux10_out: resulta size - 64 bits
-// constant: 64 bits
-// out data: 64 bits 
-
 wire [63:0]data_out;
 wire [63:0] mux10_out;
 reg [63:0]double_acc_flopped;
@@ -239,8 +206,8 @@ reg [63:0]double_acc_flopped;
 assign mux10_out = accumulate_flopped_3 ? double_acc_flopped: ( loadconst_flopped_3 ? constant : 64'd0 );
 assign data_out = accumulate_flopped_3 ? negate_out + mux10_out : ( loadconst_flopped_3 ? mux10_out : ( negate_flopped_3 ? negate_out + chainin : negate_out ));
 
-wire[99:0] mux9_out;
-assign mux9_out = mux9_select_flopped_3 ? {36'd0, data_out} : { mult_out[73:36] ,28'd0, mult_out[35:0]};
+wire [99:0] mux9_out;
+	assign mux9_out = mux9_select_flopped_3 ? {36'b0, data_out} : { mult_out[73:36] , 28'b0, mult_out[35:0]};
 
 reg [99:0] output_register_bank;
 //output register bank
@@ -249,7 +216,7 @@ always @(posedge clk) begin
 		output_register_bank <= 0;
 		double_acc_flopped <= 0;
     	end else begin
-      		output_register_bank<=mux9_out;
+		output_register_bank <= mux9_out[99:0];
 		double_acc_flopped <= mux9_out[63:0];
     	end
 end

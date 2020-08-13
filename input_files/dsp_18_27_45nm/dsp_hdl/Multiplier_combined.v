@@ -33,7 +33,6 @@ wire [17:0] mult7_c;
 wire [18:0] mult8_c;
 wire [17:0] mult9_c;
 
-
 always @ (*) begin
 //for 18*19 mode
 if (mode == 1'b0) begin
@@ -105,7 +104,15 @@ multiplier_basic_1 M7( mult7_a, mult7_b, mult7_c);
 multiplier_basic_2 M8( mult8_a, mult8_b, mult8_c);
 multiplier_basic_1 M9( mult9_a, mult9_b, mult9_c);
 
-assign OUT1 = mode ? {mult1_c + mult2_c << 9 + mult3_c << 9 + mult4_c << 18 , mult5_c + mult6_c << 9 + mult7_c << 9 + mult8_c << 18}: mult1_c + mult2_c << 9 + mult3_c << 18 + mult4_c << 9 + mult5_c << 18 + mult6_c << 27 + mult7_c << 18 + mult8_c << 27 + mult9_c << 36;
+	wire [36:0] temp1;
+	wire [36:0] temp2;
+	wire [73:0] temp3; 
+	
+assign temp1 = mult1_c + (mult2_c << 9) + (mult3_c << 9) + (mult4_c << 18);
+assign temp2 = mult5_c + (mult6_c << 9) + (mult7_c << 9) + (mult8_c << 18);
+assign temp3 = (mult1_c + (mult2_c << 9) + (mult3_c << 18) + (mult4_c << 9) + (mult5_c << 18) + (mult6_c << 27) + (mult7_c << 18) + (mult8_c << 27) + (mult9_c << 36));
+	
+	assign OUT1 = mode ? temp3 : {temp2, temp1};
 
 endmodule
 
