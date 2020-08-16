@@ -85,6 +85,8 @@ module FPAddSub(
 	wire [54:0]pipe_2;
 	wire [45:0]pipe_3;
 
+wire dummy;
+assign dummy = clk | rst;
 
 //internal module wires
 
@@ -364,11 +366,11 @@ module FPAddSub_a(
 			// Rotate by 0	
 			2'b00:  Lvl2 <= Stage1[23:0];       			
 			// Rotate by 4	
-			2'b01:  begin for (i=0; i<=23; i=i+1) begin Lvl2[i] <= Stage1[i+4]; end Lvl2[23:19] <= 0; end
+			2'b01:  begin for (i=0; i<=23; i=i+1) begin Lvl2[i] <= Stage1[i+4]; end /*Lvl2[23:19] <= 0;*/ end
 			// Rotate by 8
-			2'b10:  begin for (i=0; i<=23; i=i+1) begin Lvl2[i] <= Stage1[i+8]; end Lvl2[23:15] <= 0; end
+			2'b10:  begin for (i=0; i<=23; i=i+1) begin Lvl2[i] <= Stage1[i+8]; end /*Lvl2[23:15] <= 0;*/ end
 			// Rotate by 12	
-			2'b11:  begin for (i=0; i<=23; i=i+1) begin Lvl2[i] <= Stage1[i+12]; end Lvl2[23:11] <= 0; end
+			2'b11:  begin for (i=0; i<=23; i=i+1) begin Lvl2[i] <= Stage1[i+12]; end /*Lvl2[23:11] <= 0;*/ end
 	  endcase
 	end
 	
@@ -392,11 +394,11 @@ module FPAddSub_a(
 			// Rotate by 0
 			2'b00:  Lvl3 <= Stage2[23:0];   
 			// Rotate by 1
-			2'b01:  begin for (j=0; j<=23; j=j+1)  begin Lvl3[j] <= Stage2[j+1]; end Lvl3[23] <= 0; end 
+			2'b01:  begin for (j=0; j<=23; j=j+1)  begin Lvl3[j] <= Stage2[j+1]; end /*Lvl3[23] <= 0;*/ end 
 			// Rotate by 2
-			2'b10:  begin for (j=0; j<=23; j=j+1)  begin Lvl3[j] <= Stage2[j+2]; end Lvl3[23:22] <= 0; end 
+			2'b10:  begin for (j=0; j<=23; j=j+1)  begin Lvl3[j] <= Stage2[j+2]; end /*Lvl3[23:22] <= 0;*/ end 
 			// Rotate by 3
-			2'b11:  begin for (j=0; j<=23; j=j+1)  begin Lvl3[j] <= Stage2[j+3]; end Lvl3[23:21] <= 0; end 	  
+			2'b11:  begin for (j=0; j<=23; j=j+1)  begin Lvl3[j] <= Stage2[j+3]; end /*Lvl3[23:21] <= 0;*/ end 	  
 	  endcase
 	end
 	
@@ -590,11 +592,11 @@ module FPAddSub_c(
 			// Rotate by 0
 			2'b00: Lvl2 <= Stage1[32:0];       		
 			// Rotate by 4
-			2'b01: begin for (i=65; i>=33; i=i-1) begin Lvl2[i-33] <= Stage1[i-4]; end Lvl2[3:0] <= 0; end
+			2'b01: begin for (i=65; i>=33; i=i-1) begin Lvl2[i-33] <= Stage1[i-4]; end /*Lvl2[3:0] <= 0;*/ end
 			// Rotate by 8
-			2'b10: begin for (i=65; i>=33; i=i-1) begin Lvl2[i-33] <= Stage1[i-8]; end Lvl2[7:0] <= 0; end
+			2'b10: begin for (i=65; i>=33; i=i-1) begin Lvl2[i-33] <= Stage1[i-8]; end /*Lvl2[7:0] <= 0;*/ end
 			// Rotate by 12
-			2'b11: begin for (i=65; i>=33; i=i-1) begin Lvl2[i-33] <= Stage1[i-12]; end Lvl2[11:0] <= 0; end
+			2'b11: begin for (i=65; i>=33; i=i-1) begin Lvl2[i-33] <= Stage1[i-12]; end /*Lvl2[11:0] <= 0;*/ end
 	  endcase
 	end
 	
@@ -605,11 +607,11 @@ module FPAddSub_c(
 			// Rotate by 0
 			2'b00:  Lvl3 <= Stage2[32:0];
 			// Rotate by 1
-			2'b01: begin for (i=65; i>=33; i=i-1) begin Lvl3[i-33] <= Stage2[i-1]; end Lvl3[0] <= 0; end 
+			2'b01: begin for (i=65; i>=33; i=i-1) begin Lvl3[i-33] <= Stage2[i-1]; end /*Lvl3[0] <= 0;*/ end 
 			// Rotate by 2
-			2'b10: begin for (i=65; i>=33; i=i-1) begin Lvl3[i-33] <= Stage2[i-2]; end Lvl3[1:0] <= 0; end
+			2'b10: begin for (i=65; i>=33; i=i-1) begin Lvl3[i-33] <= Stage2[i-2]; end /*Lvl3[1:0] <= 0;*/ end
 			// Rotate by 3
-			2'b11: begin for (i=65; i>=33; i=i-1) begin Lvl3[i-33] <= Stage2[i-3]; end Lvl3[2:0] <= 0; end
+			2'b11: begin for (i=65; i>=33; i=i-1) begin Lvl3[i-33] <= Stage2[i-3]; end /*Lvl3[2:0] <= 0;*/ end
 	  endcase
 	end
 	

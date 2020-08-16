@@ -169,9 +169,17 @@ wire [15:0] fp16_top_mult;
 reg [15:0] fp16_bot_mult_flopped;
 reg [15:0] fp16_top_mult_flopped;
 wire [15:0] fp16_adder_out;
+
 //fp16 multiplier
-FPMult_16 fp16mult1( .clk(clk), .rst(reset), .a(bot_a), .b(bot_b), .result(fp16_bot_mult), .flags() );
-FPMult_16 fp16mult2( .clk(clk), .rst(reset), .a(top_a), .b(top_b), .result(fp16_top_mult), .flags() );
+wire [10:0 ] mult_fp16_1_a;
+wire [10:0 ] mult_fp16_1_b;
+wire [10:0 ] mult_fp16_2_a;
+wire [10:0 ] mult_fp16_2_b;
+wire [21:0 ] mult_fp16_1_c;
+wire [21:0 ] mult_fp16_2_c;
+
+FPMult_16 fp16mult1( .clk(clk), .rst(reset), .a(bot_a), .b(bot_b), .result(fp16_bot_mult), .flags() , .mult_ip_a(mult_fp16_1_a), .mult_ip_b(mult_fp16_1_b), .Mp(mult_fp16_1_c) );
+FPMult_16 fp16mult2( .clk(clk), .rst(reset), .a(top_a), .b(top_b), .result(fp16_top_mult), .flags() , .mult_ip_a(mult_fp16_2_a), .mult_ip_b(mult_fp16_2_b), .Mp(mult_fp16_2_c) );
 
 reg [31:0] adder_a_flopped_1;
 reg [31:0] adder_a_flopped_2;
@@ -198,7 +206,7 @@ FPAddSub_16 fp16_adder( .clk(clk), .rst(reset) , .a(fp16_top_mult_flopped), .b(f
 wire [31:0] fp32_converter_out;
 fp16_to_fp32 fp_converter ( .a(fp16_adder_out) , .b(fp32_converter_out));
 
-//final multiplier
+//FP32 multiplier
 wire [73:0] mult_out;
 
 wire [31:0] mult_ip_a;
@@ -390,25 +398,25 @@ assign dy_flopped = stream_flopped_2[71:63];
 
 always @ (*) begin
 
-if (mode_flopped_1[2] == 1'b1) begin
+if (mode_flopped_1[2] == 1'b1) begin //Int
 mult_ip_1 = {by_flopped, bx_flopped, ay_flopped_9, ax_flopped_9 };
 mult_ip_2 = {dy_flopped, dx_flopped, cy_flopped, cx_flopped };
 mode_bit =2'b10;
 end
+//
+//else if (mode_flopped_1[1] == 1'b1) begin //FP32
+//mult_ip_1 = {5'b00001, a[22:0]};
+//mult_ip_2 = {12'b000000000001, b[22:17]};
+//mode_bit =2'b01;
+//end
 
-else if (mode_flopped_1[1] == 1'b1) begin
-mult_ip_1 = {5'b00001, a[22:0]};
-mult_ip_2 = {12'b000000000001, b[22:17]};
-mode_bit =2'b01;
-end
-
-else if (mode_flopped_1[0] ==1'b0) begin
+else if (mode_flopped_1[0] ==1'b0) begin //Fixed 18*19
 mult_ip_1 =  mux_select_1 ? { coeffbank_a[stream_flopped_1[112:110]], preadder_out[18:0]}: {stream_flopped_1[91:74] , preadder_out[18:0]};
 mult_ip_2 =  mux_select_2 ? { coeffbank_b[stream_flopped_1[115:113]], preadder_out[37:19]}: {stream_flopped_1[109:92] , preadder_out[37:19]};
  mode_bit =2'b00;
 end
 
-else if (mode_flopped_1[0] == 1'b1) begin
+else if (mode_flopped_1[0] == 1'b1) begin //Fixed 27*27
 mult_ip_1 = {9'b0, preadder_out[27:0] } ;
 mult_ip_2 = mux_select_1 ? { 10'b0, coeffbank_b[stream_flopped_1[115:113]][8:0], coeffbank_a[stream_flopped_1[112:110]] } : {10'b0, stream_flopped_1[79:53]};
  mode_bit =2'b01;
@@ -431,14 +439,40 @@ always @(posedge clk) begin
     	end
 end
 
+reg [36:0] mult_ip_1_actual;
+reg [36:0] mult_ip_2_actual;
+reg [1:0] mode_bit_actual;
 
-Multiplier_combined multiplier( mult_ip_1_flopped, mult_ip_2_flopped ,mult_out, mode_bit_flopped); //mult_out= {mult2 out , mult1 out} for 18/19 bit mode, for 27 bit mode, it's just one mult output
+
+assign mult_fp16_1_c = mult_out[21:0];
+assign mult_fp16_2_c = mult_out[58:37];
+reg [2:0]mode_flopped_2;
+
+always @ (*) begin
+if (mode_flopped_2 [1] == 1'b1) begin //FP32
+	if (mode_flopped_2 [0] == 1'b0) begin
+	mult_ip_1_actual = {5'b00001, a[22:0]};
+	mult_ip_2_actual = {12'b000000000001, b[22:17]};
+	mode_bit_actual = 2'b01; end
+	else if (mode_flopped_2 [0] == 1'b1) begin
+	mult_ip_1_actual = { 7'b0, mult_fp16_1_b , 8'b0 ,mult_fp16_1_a};
+	mult_ip_2_actual = { 7'b0, mult_fp16_2_b , 8'b0 ,mult_fp16_2_a};
+	mode_bit_actual = 2'b00; end
+	end
+else begin
+		mult_ip_1_actual = mult_ip_1_flopped;
+		mult_ip_2_actual = mult_ip_2_flopped;
+		mode_bit_actual = mode_bit_flopped;
+end
+end
+
+Multiplier_combined multiplier( mult_ip_1_actual, mult_ip_2_actual ,mult_out, mode_bit_flopped); //mult_out= {mult2 out , mult1 out} for 18/19 bit mode, for 27 bit mode, it's just one mult output
 
 reg loadconst_flopped_2;
 reg accumulate_flopped_2;
 reg negate_flopped_2;
 reg sub_flopped_2;
-reg [2:0]mode_flopped_2;
+//reg [2:0]mode_flopped_2;
 reg mux9_select_flopped_2;
 
 reg loadconst_flopped_3;
@@ -576,4 +610,3 @@ assign resultb = mode_flopped_4[1] ? 37'b0 : output_register_bank [99:64];
 assign chainout= mode_flopped_4[1] ? chainout_1 : output_register_bank [63:0];
 
 endmodule
-

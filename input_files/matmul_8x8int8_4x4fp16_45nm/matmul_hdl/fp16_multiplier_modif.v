@@ -187,6 +187,9 @@ module FPMult_PrepModule (
 	output [`MANTISSA:0] fixed_pt_mantissa_mult_inp_a;
 	output [`MANTISSA:0] fixed_pt_mantissa_mult_inp_b;
 	input [2*`MANTISSA+1:0] fixed_pt_mantissa_mult_out;	
+
+	wire dummy;
+	assign dummy = clk | rst;
 	
 	// Internal signals							// If signal is high...
 	wire ANaN ;										// A is a signalling NaN
@@ -264,6 +267,9 @@ module FPMult_ExecuteModule(
 	output GRS ;
 	
 	wire [2*`MANTISSA+1:0] Mp ;
+
+	wire dummy;
+	assign dummy = a | b;
 	
 	assign Sp = (Sa ^ Sb) ;												// Equal signs give a positive product
 	

@@ -29,7 +29,10 @@ module FPMult_16(
 		a,
 		b,
 		result,
-		flags
+		flags,
+		mult_ip_a,
+		mult_ip_b,
+		Mp
     );
 	
 	// Input Ports
@@ -42,6 +45,11 @@ module FPMult_16(
 	output [`DWIDTH-1:0] result ;					// Product, result of the operation, 32-bit FP number
 	output [4:0] flags ;				// Flags indicating exceptions according to IEEE754
 	
+	output [`MANTISSA:0]mult_ip_a;
+	output [`MANTISSA:0]mult_ip_b;
+	
+	input [2*`MANTISSA+1:0] Mp ;
+
 	// Internal signals
 	wire [31:0] Z_int ;				// Product, result of the operation, 32-bit FP number
 	wire [4:0] Flags_int ;			// Flags indicating exceptions according to IEEE754
@@ -51,7 +59,7 @@ module FPMult_16(
 	wire Sp ;							// Product sign
 	wire [`EXPONENT-1:0] Ea ;					// A's exponent
 	wire [`EXPONENT-1:0] Eb ;					// B's exponent
-	wire [2*`MANTISSA+1:0] Mp ;					// Product mantissa
+	//wire [2*`MANTISSA+1:0] Mp ;					// Product mantissa
 	wire [4:0] InputExc ;			// Exceptions in inputs
 	wire [`MANTISSA-1:0] NormM ;				// Normalized mantissa
 	wire [`EXPONENT:0] NormE ;				// Normalized exponent
@@ -80,7 +88,7 @@ module FPMult_16(
 	assign flags = pipe_4[4:0] ;
 	
 	// Prepare the operands for alignment and check for exceptions
-	FPMult_PrepModule PrepModule(clk, rst, pipe_0[2*`DWIDTH-1:`DWIDTH], pipe_0[`DWIDTH-1:0], Sa, Sb, Ea[`EXPONENT-1:0], Eb[`EXPONENT-1:0], Mp[2*`MANTISSA+1:0], InputExc[4:0]) ;
+	FPMult_PrepModule PrepModule(clk, rst, pipe_0[2*`DWIDTH-1:`DWIDTH], pipe_0[`DWIDTH-1:0], Sa, Sb, Ea[`EXPONENT-1:0], Eb[`EXPONENT-1:0], InputExc[4:0], mult_ip_a[`MANTISSA : 0], mult_ip_b[`MANTISSA:0]) ;
 
 	// Perform (unsigned) mantissa multiplication
 	FPMult_ExecuteModule ExecuteModule(pipe_1[3*`MANTISSA+`EXPONENT*2+7:2*`MANTISSA+2*`EXPONENT+8], pipe_1[2*`MANTISSA+2*`EXPONENT+7:2*`MANTISSA+7], pipe_1[2*`MANTISSA+6:5], pipe_1[2*`MANTISSA+2*`EXPONENT+6:2*`MANTISSA+`EXPONENT+7], pipe_1[2*`MANTISSA+`EXPONENT+6:2*`MANTISSA+7], pipe_1[2*`MANTISSA+2*`EXPONENT+8], pipe_1[2*`MANTISSA+2*`EXPONENT+7], Sp, NormE[`EXPONENT:0], NormM[`MANTISSA-1:0], GRS) ;
@@ -100,7 +108,8 @@ module FPMult_16(
 			pipe_3 = 0;
 			pipe_4 = 0;
 		end 
-		else begin		
+		else begin	
+			
 			/* PIPE 0
 				[63:32] A
 				[31:0] B
@@ -155,8 +164,9 @@ module FPMult_PrepModule (
 		Sb,
 		Ea,
 		Eb,
-		Mp,
-		InputExc
+		InputExc,
+		mult_ip_a,
+		mult_ip_b
 	);
 	
 	// Input ports
@@ -170,9 +180,11 @@ module FPMult_PrepModule (
 	output Sb ;										// B's sign
 	output [`EXPONENT-1:0] Ea ;								// A's exponent
 	output [`EXPONENT-1:0] Eb ;								// B's exponent
-	output [2*`MANTISSA+1:0] Mp ;							// Mantissa product
+	//output [2*`MANTISSA+1:0] Mp ;							// Mantissa product
 	output [4:0] InputExc ;						// Input numbers are exceptions
-	
+	output [`MANTISSA:0]mult_ip_a;
+	output [`MANTISSA:0]mult_ip_b;
+
 	// Internal signals							// If signal is high...
 	wire ANaN ;										// A is a signalling NaN
 	wire BNaN ;										// B is a signalling NaN
@@ -201,7 +213,11 @@ module FPMult_PrepModule (
 
 
 	//assign Mp = ({4'b0001, a[`MANTISSA-1:0]}*{4'b0001, b[`MANTISSA-1:9]}) ;
-	assign Mp = ({1'b1,a[`MANTISSA-1:0]}*{1'b1, b[`MANTISSA-1:0]}) ;
+	assign mult_ip_a = {1'b1,a[`MANTISSA-1:0]};
+	assign mult_ip_b = {1'b1, b[`MANTISSA-1:0]};
+
+
+	//assign Mp = ({1'b1,a[`MANTISSA-1:0]}*{1'b1, b[`MANTISSA-1:0]}) ;
 
 	
     //We multiply part of the mantissa here
@@ -332,61 +348,4 @@ module FPMult_RoundModule(
 	assign Z = {Sp, FinalE[`EXPONENT-1:0], FinalM[`MANTISSA-1:0]} ;   // Putting the pieces together
 	assign Flags = InputExc[4:0];
 
-endmodule
-
-
-module FPMult_tb;
-
-	// Inputs
-	reg clk;
-	reg rst;
-	reg [`DWIDTH-1:0] a;
-	reg [`DWIDTH-1:0] b;
-
-	// Outputs
-	wire [`DWIDTH-1:0] result;
-	wire [4:0] flags;
-	
-	integer i ;
-
-	// Instantiate the Unit Under Test (UUT)
-	FPMult uut (
-		.clk(clk), 
-		.rst(rst), 
-		.a(a), 
-		.b(b), 
-		.result(result), 
-		.flags(flags)
-	);
-
-	always begin
-		#5 clk = ~clk;
-	end
-	
-	initial begin
-		// Initialize Inputs
-		clk = 0;
-		rst = 0;
-		a = 0;
-		a = 0;
-
-		// Wait 10 ns for global reset to finish
-		#10;
-        
-		// Add stimulus here
-
-		// expected: 1988h
-		#10 a = 16'h1234; b = 16'h4321;
-		
-		#10 a = 16'hE37B; b = 16'h1AB4; 	
-
-		#10 a = 16'hABCD; b = 16'h9876;
-
-
-		#100 
-
-		#10 $finish; 
-
-	end
-      
 endmodule

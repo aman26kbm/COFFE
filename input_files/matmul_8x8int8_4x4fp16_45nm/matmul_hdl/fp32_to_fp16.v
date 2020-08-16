@@ -11,6 +11,7 @@ always @ (*) begin
 
 if ( a [30: 0] == 15'b0 ) begin //signed zero
 	b_temp [15] = a[30]; //sign bit
+	b_temp [14:0] = 15'b0; 
 end
 
 else begin
@@ -40,7 +41,7 @@ assign b = b_temp;
 
 
 endmodule
-
+/*
 module tb_fp32_to_fp16 ();
 reg [31:0] a;
 wire [15:0] b;
@@ -59,3 +60,4 @@ a = 0;
 end
 
 endmodule
+*/
