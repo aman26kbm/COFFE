@@ -4,7 +4,7 @@
 ########## General Design Settings ##########
 #############################################
 # The folder in which all the design files are located:
-design_folder=/home/projects/ljohn/aarora1/coffe2_aman2/COFFE/input_files/matmul_8x8int8_4x4fp16_45nm/matmul_hdl
+design_folder=/home/projects/ljohn/aarora1/coffe2_aman/COFFE/input_files/matmul_8x8int8_4x4fp16_45nm/matmul_hdl
 
 # The design language. Should be either 'verilog', 'vhdl' or 'sverilog'
 design_language=verilog
@@ -28,7 +28,7 @@ clock_period=3.0
 top_level=matmul_slice
 
 # The name of the folder in which post-synthesis files and synthesis reports are to be stored
-synth_folder=/home/projects/ljohn/aarora1/coffe2_aman2/COFFE/output_files/matmul_8x8int8_4x4fp16_45nm/matmul_synth
+synth_folder=/home/projects/ljohn/aarora1/coffe2_aman/COFFE/output_files/matmul_8x8int8_4x4fp16_45nm/matmul_synth
 
 # Do you want to be informed of warnings during synthesis?
 show_warnings=True
@@ -124,7 +124,7 @@ height_to_width_ratio=16.0
 space_around_core=10
 
 # The folder in which place and route reports and post-routing netlists and spef files will be stored
-pr_folder=/home/projects/ljohn/aarora1/coffe2_aman2/COFFE/output_files/matmul_8x8int8_4x4fp16_45nm/matmul_pnr
+pr_folder=/home/projects/ljohn/aarora1/coffe2_aman/COFFE/output_files/matmul_8x8int8_4x4fp16_45nm/matmul_pnr
 
 
 ##############################################
@@ -143,7 +143,7 @@ primetime_lib_path=/home/projects/ljohn/aarora1/cadence_gpdk/gsclib045_all_v4.4/
 primetime_lib_name=fast_vdd1v0_basicCells.modif.db
 
 # The name of the folder in which primetime results/reports are to be stored
-primetime_folder=/home/projects/ljohn/aarora1/coffe2_aman2/COFFE/output_files/matmul_8x8int8_4x4fp16_45nm/matmul_pt
+primetime_folder=/home/projects/ljohn/aarora1/coffe2_aman/COFFE/output_files/matmul_8x8int8_4x4fp16_45nm/matmul_pt
 
 # COFFE parameters:
 name=matmul_slice

@@ -4,7 +4,7 @@
 ########## General Design Settings ##########
 #############################################
 # The folder in which all the design files are located:
-design_folder=/home/projects/ljohn/aarora1/coffe2_aman2/COFFE/input_files/dsp_18_27_fp32_int8_fp16_45nm/dsp_hdl
+design_folder=/home/projects/ljohn/aarora1/coffe2_aman/COFFE/input_files/dsp_18_27_fp32_int8_fp16_45nm/dsp_hdl
 
 # The design language. Should be either 'verilog', 'vhdl' or 'sverilog'
 design_language=verilog
@@ -28,7 +28,7 @@ clock_period=3.0
 top_level=dsp_slice_combined
 
 # The name of the folder in which post-synthesis files and synthesis reports are to be stored
-synth_folder=/home/projects/ljohn/aarora1/coffe2_aman2/COFFE/output_files/dsp_18_27_fp32_int8_fp16_45nm/dsp_synth
+synth_folder=/home/projects/ljohn/aarora1/coffe2_aman/COFFE/output_files/dsp_18_27_fp32_int8_fp16_45nm/dsp_synth
 
 # Do you want to be informed of warnings during synthesis?
 show_warnings=True
@@ -124,7 +124,7 @@ height_to_width_ratio=16.0
 space_around_core=10
 
 # The folder in which place and route reports and post-routing netlists and spef files will be stored
-pr_folder=/home/projects/ljohn/aarora1/coffe2_aman2/COFFE/output_files/dsp_18_27_fp32_int8_fp16_45nm/dsp_pnr
+pr_folder=/home/projects/ljohn/aarora1/coffe2_aman/COFFE/output_files/dsp_18_27_fp32_int8_fp16_45nm/dsp_pnr
 
 
 ##############################################
@@ -133,27 +133,28 @@ pr_folder=/home/projects/ljohn/aarora1/coffe2_aman2/COFFE/output_files/dsp_18_27
 
 #mode_signal=mode_0
 #mode_signal=mode_1
-mode_signal=enable
-mode_signal=loadconst
-mode_signal=accumulate
-mode_signal=negate
-mode_signal=sub
+#mode_signal=enable
+#mode_signal=loadconst
+#mode_signal=accumulate
+#mode_signal=negate
+#mode_signal=sub
 mode_signal=mode[0]
 mode_signal=mode[1]
-mode_signal=mux9_select
-mode_signal=internal_coeffa
-mode_signal=internal_coeffb
+mode_signal=mode[2]
+#mode_signal=mux9_select
+#mode_signal=internal_coeffa
+#mode_signal=internal_coeffb
 
 #the directory containing the primetime library and the name of the library file
 primetime_lib_path=/home/projects/ljohn/aarora1/cadence_gpdk/gsclib045_all_v4.4/lan/flow/t1u1/reference_libs/GPDK045/gsclib045_all_v4.4/gsclib045/timing/
 primetime_lib_name=fast_vdd1v0_basicCells.modif.db
 
 # The name of the folder in which primetime results/reports are to be stored
-primetime_folder=/home/projects/ljohn/aarora1/coffe2_aman2/COFFE/output_files/dsp_18_27_fp32_int8_fp16_45nm/dsp_pt
+primetime_folder=/home/projects/ljohn/aarora1/coffe2_aman/COFFE/output_files/dsp_18_27_fp32_int8_fp16_45nm/dsp_pt
 
 # COFFE parameters:
 name=dsp_slice
-num_gen_inputs=215
+num_gen_inputs=216
 crossbar_population=0.5
 height=8
 num_gen_outputs=101
