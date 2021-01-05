@@ -4,6 +4,7 @@
 import os
 import subprocess
 import coffe.utils as utils
+import time
 
 # All .sp files should be created to use sweep_data.l to set parameters.
 HSPICE_DATA_SWEEP_PATH = "sweep_data.l"
@@ -185,7 +186,8 @@ class SpiceInterface(object):
             # HSPICE failed to run
             else :
                 hspice_runs = hspice_runs + 1
-                if hspice_runs > 10 :
+                time.sleep(5)
+                if hspice_runs > 50 :
                     print "----------------------------------------------------------"
                     print "                  HSPICE failed to run                    "
                     print "----------------------------------------------------------"

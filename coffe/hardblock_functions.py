@@ -325,7 +325,7 @@ def hardblock_flow(flow_settings):
           file.close()
 
           # Run the scrip in EDI
-          subprocess.call('encounter -nowin -init edi.tcl', shell=True) 
+          subprocess.call('encounter -nowin -vdi -N2 -init edi.tcl', shell=True) 
           # clean after EDI!
           #subprocess.call('rm -rf edi.tcl', shell=True)
           #subprocess.call('rm -rf edi.conf', shell=True)
